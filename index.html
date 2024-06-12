@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <title>视频详情</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            min-height: 60vh;
+            min-width: 100vw;
+            margin-top: 20vh;
+            margin-bottom: 20vh;
+        }
+
+        .video-info {
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 20px;
+            color: #333;
+        }
+
+        .statistics-container {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .statistics {
+            text-align: center;
+        }
+
+        .number {
+            font-size: 150px;
+            font-weight: bold;
+            color: #000;
+        }
+        .label {
+            font-size: 16px;
+            color: #666;
+        }
+        .alert {
+            color: red !important;
+        }
+    </style>
+</head>
+
+<body>
+<div class="video-info">
+    <div id="title" class="title">视频标题</div>
+</div>
+<div class="statistics-container">
+    <div class="statistics">
+        <div class="number" id="play">0</div>
+        <div class="label">播放量</div>
+    </div>
+    <div class="statistics">
+        <div class="number" id="online">0</div>
+        <div class="label">在线人数</div>
+    </div>
+    <div class="statistics">
+        <div class="number" id="online-max">0</div>
+        <div class="label">最高在线</div>
+    </div>
+</div>
+</body>
+<script>
+    const url = new URL(document.location.href)
+    const bvid = url.searchParams.get("bvid")
+    const speed = parseInt(url.searchParams.get("speed")) || 10000
+    let maxOnline = 0
+    async function loadData(id) {
+        const { title, play, online } = await fetch(`/api/status?bvid=${id}`).then(res => res.json())
+        maxOnline = Math.max(maxOnline, online)
+        document.getElementById('title').textContent = title
+        document.getElementById('play').textContent = play
+        document.getElementById('online').textContent = online
+        document.getElementById('online-max').textContent = maxOnline
+        document.title = title
+        setTimeout(() => {
+            loadData(id)
+        }, speed)
+    }
+    if (bvid) {
+        loadData(bvid)
+    }
+</script>
+</html>
