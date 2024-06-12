@@ -13,8 +13,11 @@
             justify-content: space-around;
             min-height: 60vh;
             min-width: 100vw;
+            max-width: 100vw;
             margin-top: 20vh;
             margin-bottom: 20vh;
+            margin-left: 0;
+            margin-right: 0;
         }
 
         .video-info {
@@ -40,6 +43,11 @@
             font-weight: bold;
             color: #000;
         }
+
+        .number-wan {
+            font-size: 80px;
+        }
+
         .label {
             font-size: 16px;
             color: #666;
@@ -78,9 +86,17 @@
         const { title, play, online } = await fetch(`/api/status?bvid=${id}`).then(res => res.json())
         maxOnline = Math.max(maxOnline, online)
         document.getElementById('title').textContent = title
-        document.getElementById('play').textContent = play
-        document.getElementById('online').textContent = online
-        document.getElementById('online-max').textContent = maxOnline
+        const numberStrToHTML = (number) => {
+            const last = number.toString().slice(-1)
+            if (last === '万') {
+                return `${number.slice(0, -1)}<span class="number-wan">万</span>`
+            } else {
+                return number
+            }
+        }
+        document.getElementById('play').innerHTML = numberStrToHTML(play)
+        document.getElementById('online').innerHTML = numberStrToHTML(online)
+        document.getElementById('online-max').innerHTML = numberStrToHTML(maxOnline)
         document.title = title
         setTimeout(() => {
             loadData(id)
