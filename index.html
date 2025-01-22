@@ -107,6 +107,7 @@
     const bvid = url.searchParams.get("bvid")
     const speed = parseInt(url.searchParams.get("speed")) || 10000
     let maxOnline = 0
+
     async function loadData(id) {
         const { title, play, online } = await fetch(`/api/status?bvid=${id}`).then(res => res.json())
         maxOnline = Math.max(maxOnline, online)
@@ -128,20 +129,47 @@
         }, speed)
     }
 
+    async function loadBvid() {
+        try {
+            const input = document.getElementById('bvid').value
+            const id = input.match(/BV([a-zA-Z0-9]+)/)?.[1]
+            if (id) {
+                document.location.href = `?bvid=bv${id}`
+            } else {
+                const { bvid } = await fetch('/api/bvid', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        input
+                    })
+                }).then(res => res.json())
+                document.location.href = `?bvid=${bvid}`
+            }
+        } catch (error) {
+            alert('请输入正确的链接')
+        }
+    }
+
+    function changeStatus(showDetail) {
+        if (showDetail) {
+            document.getElementById('input').style.display = 'none'
+            document.getElementById('detail').style.display = 'block'
+        } else {
+            document.getElementById('input').style.display = 'block'
+            document.getElementById('detail').style.display = 'none'
+        }
+    }
+
     if (bvid) {
-        document.getElementById('input').style.display = 'none'
-        document.getElementById('detail').style.display = 'block'
+        changeStatus(true)
         loadData(bvid)
     } else {
-        document.getElementById('input').style.display = 'block'
-        document.getElementById('detail').style.display = 'none'
+        changeStatus(false)
         document.getElementById('bvid').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
-                const bvid = document.getElementById('bvid').value
-                const id = bvid.match(/BV([a-zA-Z0-9]+)/)[1]
-                document.getElementById('input').style.display = 'none'
-                document.getElementById('detail').style.display = 'block'
-                document.location.href = `?bvid=bv${id}`
+                loadBvid().catch(console.error)
             }
         })
     }
