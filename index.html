@@ -29,6 +29,7 @@
         .title {
             font-size: 20px;
             color: #eeeeee;
+            height: 80px;
         }
 
         .statistics-container {
@@ -70,6 +71,10 @@
             background: #000000;
         }
 
+        #detail {
+            min-width: 100vw;
+            max-width: 100vw;
+        }
     </style>
 </head>
 
@@ -124,15 +129,19 @@
     }
 
     if (bvid) {
+        document.getElementById('input').style.display = 'none'
+        document.getElementById('detail').style.display = 'block'
         loadData(bvid)
     } else {
         document.getElementById('input').style.display = 'block'
+        document.getElementById('detail').style.display = 'none'
         document.getElementById('bvid').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 const bvid = document.getElementById('bvid').value
-                if (bvid) {
-                    document.location.href = `?bvid=${bvid}`
-                }
+                const id = bvid.match(/BV([a-zA-Z0-9]+)/)[1]
+                document.getElementById('input').style.display = 'none'
+                document.getElementById('detail').style.display = 'block'
+                document.location.href = `?bvid=bv${id}`
             }
         })
     }
