@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1 maximum-scale=1">
     <title>视频详情</title>
     <style>
         body {
@@ -35,6 +36,12 @@
             justify-content: space-around;
         }
 
+        @media (max-width: 600px) {
+            .statistics-container {
+                flex-direction: column;
+            }
+        }
+
         .statistics {
             text-align: center;
         }
@@ -53,30 +60,42 @@
             font-size: 16px;
             color: #eeeeee;
         }
-        .alert {
-            color: red !important;
+
+        #bvid {
+            font-size: 20px;
+            padding: 10px;
+            border: 1px solid #1d9bf0;
+            border-radius: 5px;
+            color: #1d9bf0;
+            background: #000000;
         }
+
     </style>
 </head>
 
 <body>
-<div class="video-info">
-    <div id="title" class="title">视频标题</div>
-</div>
-<div class="statistics-container">
-    <div class="statistics">
-        <div class="number" id="play">0</div>
-        <div class="label">播放量</div>
+    <div id="detail" style="display: none;">
+        <div class="video-info">
+            <div id="title" class="title">视频标题</div>
+        </div>
+        <div class="statistics-container">
+            <div class="statistics">
+                <div class="number" id="play">0</div>
+                <div class="label">播放量</div>
+            </div>
+            <div class="statistics">
+                <div class="number" id="online">0</div>
+                <div class="label">在线人数</div>
+            </div>
+            <div class="statistics">
+                <div class="number" id="online-max">0</div>
+                <div class="label">最高在线</div>
+            </div>
+        </div>
     </div>
-    <div class="statistics">
-        <div class="number" id="online">0</div>
-        <div class="label">在线人数</div>
+    <div id="input">
+        <input type="text" id="bvid" placeholder="请输入链接" />
     </div>
-    <div class="statistics">
-        <div class="number" id="online-max">0</div>
-        <div class="label">最高在线</div>
-    </div>
-</div>
 </body>
 <script>
     const url = new URL(document.location.href)
@@ -103,8 +122,20 @@
             loadData(id)
         }, speed)
     }
+
     if (bvid) {
         loadData(bvid)
+    } else {
+        document.getElementById('input').style.display = 'block'
+        document.getElementById('bvid').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const bvid = document.getElementById('bvid').value
+                if (bvid) {
+                    document.location.href = `?bvid=${bvid}`
+                }
+            }
+        })
     }
 </script>
+
 </html>
